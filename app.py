@@ -20,7 +20,7 @@ with st.sidebar:
 
 # --- Main Page ---
 st.title("🍎 Fruit Detection using YOLOv8")
-st.write("Upload an image and the YOLOv8 model will detect the fruits in it. This model can detect apples, bananas, and oranges.")
+st.write("Upload an image and our YOLOv8 model will detect the fruits in it. This model can detect apples, bananas, and oranges.")
 
 
 # --- Caching the Model ---
