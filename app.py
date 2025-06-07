@@ -2,6 +2,7 @@ import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import io
+import os
 
 # --- Streamlit Page Configuration ---
 st.set_page_config(
@@ -26,12 +27,26 @@ st.write("Upload an image and the YOLOv8 model will detect the fruits in it. Thi
 # This is a key performance optimization for Streamlit apps.
 @st.cache_resource
 def load_model(model_path):
-    """
-    Loads a YOLOv8 model from the specified path.
-    Caches the model to avoid reloading it on every app interaction.
-    """
     model = YOLO(model_path)
     return model
+
+# --- Construct the Absolute Path to the Model ---
+# Get the directory of the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Join the script directory with the model file name
+model_path = os.path.join(script_dir, 'best.pt')
+
+# --- Load the trained YOLOv8 model ---
+try:
+    model = load_model(model_path)
+except Exception as e:
+    # Add more detailed error logging for debugging on Streamlit Cloud
+    st.error(f"Error loading model from path: {model_path}")
+    st.error(f"Exception: {e}")
+    # Let's also check if the file exists at that path
+    if not os.path.exists(model_path):
+        st.error("Model file does not exist at the specified path.")
+    st.stop()
 
 # Load the trained YOLOv8 model
 model_path = 'best.pt'
