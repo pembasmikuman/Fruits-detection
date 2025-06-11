@@ -1,3 +1,4 @@
+# --- START OF CORRECTED app.py ---
 import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
@@ -6,7 +7,7 @@ import os
 
 # --- Streamlit Page Configuration ---
 st.set_page_config(
-    page_title="Fruit Detection App",
+    page_title="Our Family Fruit Detection",
     page_icon="🍎",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -14,47 +15,37 @@ st.set_page_config(
 
 # --- Sidebar ---
 with st.sidebar:
-    st.header("Image/Video Config")
+    st.header("Image Config")
     confidence_threshold = st.slider("Select Model Confidence", 0.0, 1.0, 0.25, 0.01)
-    # You could add more options here, like IOU threshold
 
 # --- Main Page ---
-st.title("🍎 Fruit Detection using YOLOv8")
+st.title("🍎 Our Family Fruit Detection using YOLOv8")
 st.write("Upload an image and our YOLOv8 model will detect the fruits in it. This model can detect apples, bananas, and oranges.")
 
 
 # --- Caching the Model ---
-# This is a key performance optimization for Streamlit apps.
 @st.cache_resource
 def load_model(model_path):
+    """Loads a YOLOv8 model from the specified path."""
     model = YOLO(model_path)
     return model
 
-# --- Construct the Absolute Path to the Model ---
-# Get the directory of the current script
-script_dir = os.path.dirname(os.path.abspath(__file__))
-# Join the script directory with the model file name
-model_path = os.path.join(script_dir, 'best.pt')
-
-# --- Load the trained YOLOv8 model ---
+# --- Load the trained YOLOv8 model (THE CORRECT WAY) ---
 try:
-    model = load_model(model_path)
-except Exception as e:
-    # Add more detailed error logging for debugging on Streamlit Cloud
-    st.error(f"Error loading model from path: {model_path}")
-    st.error(f"Exception: {e}")
-    # Let's also check if the file exists at that path
+    # Construct the absolute path to the model file
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(script_dir, 'best.pt')
+
+    # Check if the model file exists before loading
     if not os.path.exists(model_path):
-        st.error("Model file does not exist at the specified path.")
-    st.stop()
+        st.error(f"Model file not found at {model_path}. Make sure 'best.pt' is in your GitHub repository.")
+        st.stop()
 
-# Load the trained YOLOv8 model
-model_path = 'best.pt'
-try:
     model = load_model(model_path)
+
 except Exception as e:
-    st.error(f"Error loading model: {e}")
-    st.stop() # Stop the app if the model can't be loaded
+    st.error(f"Error loading the model: {e}")
+    st.stop()
 
 
 # --- Image Upload and Processing ---
@@ -70,7 +61,6 @@ if uploaded_file is not None:
     col1, col2 = st.columns(2)
 
     with col1:
-        # ----> THE FIX IS HERE <----
         st.image(image, caption="Uploaded Image", use_container_width=True)
 
     # Perform detection when the button is clicked
@@ -86,7 +76,6 @@ if uploaded_file is not None:
             result_image_rgb = result_plot[:, :, ::-1]
 
             with col2:
-                # ----> AND THE FIX IS HERE <----
                 st.image(result_image_rgb, caption="Detected Image", use_container_width=True)
 
             # Display detected classes and their counts
@@ -106,3 +95,5 @@ if uploaded_file is not None:
 
 else:
     st.info("Please upload an image file to get started.")
+
+# --- END OF CORRECTED app.py ---
