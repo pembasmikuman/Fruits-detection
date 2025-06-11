@@ -70,7 +70,8 @@ if uploaded_file is not None:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        # ----> THE FIX IS HERE <----
+        st.image(image, caption="Uploaded Image", use_container_width=True)
 
     # Perform detection when the button is clicked
     if st.button("Detect Fruits"):
@@ -85,7 +86,8 @@ if uploaded_file is not None:
             result_image_rgb = result_plot[:, :, ::-1]
 
             with col2:
-                st.image(result_image_rgb, caption="Detected Image", use_column_width=True)
+                # ----> AND THE FIX IS HERE <----
+                st.image(result_image_rgb, caption="Detected Image", use_container_width=True)
 
             # Display detected classes and their counts
             st.subheader("Detected Objects:")
